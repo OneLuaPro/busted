@@ -1,0 +1,1291 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>busted : Elegant Lua unit testing, by Olivine-Labs</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/solarized-light.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body data-spy="scroll" data-target=".sidebar">
+    <div class="container">
+      <header class="hero-unit">
+        <h1 class="remove-bottom">busted</h1>
+        <h2>Elegant Lua unit testing.</h2>
+      </header>
+    </div>
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+          <a class="navbar-brand" href="https://lunarmodules.github.io/busted">Busted <span class="version">2.1.1</span></a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="https://github.com/lunarmodules/busted"><span class="glyphicon glyphicon-folder-open glyphicon-white extra-right-margin"></span><span class="extra-info">View On</span><strong>GitHub</strong><span class="extra-info"> @ <small>lunarmodules/busted</small></span></a></li>
+            <li><a href="https://github.com/lunarmodules/busted/zipball/master"><span class="glyphicon glyphicon-download-alt glyphicon-white"></span> <strong>ZIP File</strong></a></li>
+            <li><a href="https://github.com/lunarmodules/busted/tarball/master"><span class="glyphicon glyphicon-download-alt glyphicon-white"></span> <strong>TAR Ball</strong></a></li>
+            <li><a href="https://luarocks.org" target="_blank"><strong class="extra-info">Install:</strong> luarocks install busted</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="col col-lg-3 sidebar">
+          <ul class="nav nav-list sidenav">
+            <li><a href="index.html#overview"><i class="icon-chevron-right"></i>Overview</a></li>
+            <li><a href="index.html#usage"><i class="icon-chevron-right"></i>Usage</a></li>
+            <li><a href="index.html#defining-tests"><i class="icon-chevron-right"></i>Defining Tests</a></li>
+            <li><a href="index.html#asserts"><i class="icon-chevron-right"></i>Asserts</a></li>
+            <li><a href="index.html#spies-mocks-stubs"><i class="icon-chevron-right"></i>Spies, Stubs & Mocks</a></li>
+            <li><a href="index.html#matchers"><i class="icon-chevron-right"></i>Matchers</a></li>
+            <li><a href="index.html#async-tests"><i class="icon-chevron-right"></i>Async Tests</a></li>
+            <li><a href="index.html#private"><i class="icon-chevron-right"></i>Private</a></li>
+            <li><a href="index.html#output-handlers"><i class="icon-chevron-right"></i>Output Handlers</a></li>
+            <li><a href="index.html#moonscript"><i class="icon-chevron-right"></i>Moonscript</a></li>
+            <li><a href="index.html#language-packs"><i class="icon-chevron-right"></i>i18n</a></li>
+            <li><a href="index.html#shell-completion"><i class="icon-chevron-right"></i>Shell Completion</a></li>
+            <li><a href="index.html#contributing"><i class="icon-chevron-right"></i>Contributing</a></li>
+            <li><a href="https://github.com/lunarmodules/busted/actions?workflow=Busted"><img src="https://img.shields.io/github/actions/workflow/status/lunarmodules/busted/busted.yml?branch=master&label=Busted&logo=Lua" alt="Busted"></a></li>
+          </ul>
+        </div>
+
+        <div class="col col-lg-9">
+          <section id="overview">
+            <h2>What's <em>busted</em>, precious?</h2>
+
+            <p>
+              busted is a unit testing framework with a focus on being
+              <strong>easy to use</strong>. busted works with 
+              <strong>lua &gt;= 5.1</strong>, <strong>moonscript</strong>,
+              <strong>terra</strong>, and <strong>LuaJIT &gt;= 2.0.0</strong>.
+            </p>
+
+            <p>
+              busted test specs read naturally without being too verbose. You can
+              even chain asserts and negations, such as <code data-language="lua">assert.not.equals</code>.
+              Nest blocks of tests with contextual descriptions using <code data-language="lua">describe</code>, and
+              add tags to blocks so you can run arbitrary groups of tests.
+            </p>
+
+            <p>
+              An extensible assert library allows you to extend and craft your
+              own assert functions specific to your case with method chaining.
+              A modular output library lets you add on your own output format,
+              along with the default pretty and plain terminal output, JSON
+              with and without streaming, and TAP-compatible output that allows
+              you to run busted specs within most CI servers. You can even
+              register phrases for internationaliation with custom or built-in
+              <a href="index.html#language-packs">language packs</a>.
+            </p>
+
+<pre><code data-language="lua">describe("Busted unit testing framework", function()
+  describe("should be awesome", function()
+    it("should be easy to use", function()
+      assert.truthy("Yup.")
+    end)
+
+    it("should have lots of features", function()
+      -- deep check comparisons!
+      assert.are.same({ table = "great"}, { table = "great" })
+
+      -- or check by reference!
+      assert.are_not.equal({ table = "great"}, { table = "great"})
+
+      assert.truthy("this is a string") -- truthy: not false or nil
+
+      assert.True(1 == 1)
+      assert.is_true(1 == 1)
+
+      assert.falsy(nil)
+      assert.has_error(function() error("Wat") end, "Wat")
+    end)
+
+    it("should provide some shortcuts to common functions", function()
+      assert.are.unique({{ thing = 1 }, { thing = 2 }, { thing = 3 }})
+    end)
+
+    it("should have mocks and spies for functional tests", function()
+      local thing = require("thing_module")
+      spy.on(thing, "greet")
+      thing.greet("Hi!")
+
+      assert.spy(thing.greet).was.called()
+      assert.spy(thing.greet).was.called_with("Hi!")
+    end)
+  end)
+end)
+</code></pre>
+
+<pre><code>busted test.lua</code></pre>
+
+            <div class="thumbnail">
+              <img src="img/run.png" alt="run"/>
+            </div>
+          </section>
+
+          <section class="division" id="usage">
+            <h2>Usage</h2>
+
+            <h4>Installation</h4>
+            <p>
+              Install busted through Luarocks. Depending on your environment,
+              you can <code>apt-get install luarocks</code>, <code>brew install
+              luarocks</code>, or otherwise get it from
+              <a href="https://luarocks.org">luarocks.org</a>.
+            </p>
+
+            <p>
+              You can also install the latest or a branch by cloning the
+              <a href="https://github.com/lunarmodules/busted">busted
+              repository</a>, and running <code>luarocks make</code> from the
+              directory.
+            </p>
+
+            <h4>CLI: Running Busted</h4>
+<pre><code>Usage: busted [OPTIONS] [--] [ROOT-1 [ROOT-2 [...]]]
+
+ARGUMENTS:
+  ROOT                      test script file/folder. Folders will be
+                            traversed for any file that matches the
+                            --pattern option. (optional, default: nil)
+
+OPTIONS:
+  --version                 prints the program version and exits
+  -p, --pattern=PATTERN     only run test files matching the Lua pattern
+                            (default: _spec)
+  --exclude-pattern=PATTERN do not run test files matching the Lua
+                            pattern, takes precedence over --pattern
+  -e STATEMENT              execute statement STATEMENT
+  -o, --output=LIBRARY      output library to load (default:
+                            utfTerminal)
+  -C, --directory=DIR       change to directory DIR before running
+                            tests. If multiple options are specified,
+                            each is interpreted relative to the previous
+                            one. (default: ./)
+  -f, --config-file=FILE    load configuration options from FILE
+  -t, --tags=TAGS           only run tests with these #tags (default:
+                            [])
+  --exclude-tags=TAGS       do not run tests with these #tags, takes
+                            precedence over --tags (default: [])
+  --filter=PATTERN          only run test names matching the Lua pattern
+                            (default: [])
+  --filter-out=PATTERN      do not run test names matching the Lua
+                            pattern, takes precedence over --filter
+                            (default: [])
+  -m, --lpath=PATH          optional path to be prefixed to the Lua
+                            module search path (default:
+                            ./src/?.lua;./src/?/?.lua;./src/?/init.lua)
+  --cpath=PATH              optional path to be prefixed to the Lua C
+                            module search path (default:
+                            ./csrc/?.so;./csrc/?/?.so;)
+  -r, --run=RUN             config to run from .busted file
+  --repeat=COUNT            run the tests repeatedly (default: 1)
+  --seed=SEED               random seed value to use for shuffling test
+                            order (default: /dev/urandom or os.time())
+  --lang=LANG               language for error messages (default: en)
+  --loaders=NAME            test file loaders (default: lua,moonscript)
+  --helper=PATH             A helper script that is run before tests
+  --lua=LUA                 The path to the lua interpreter busted
+                            should run under
+  -Xoutput OPTION           pass `OPTION` as an option to the output
+                            handler. If `OPTION` contains commas, it is
+                            split into multiple options at the commas.
+                            (default: [])
+  -Xhelper OPTION           pass `OPTION` as an option to the helper
+                            script. If `OPTION` contains commas, it is
+                            split into multiple options at the commas.
+                            (default: [])
+  -c, --[no-]coverage       do code coverage analysis (requires `LuaCov`
+                            to be installed) (default: off)
+  -v, --[no-]verbose        verbose output of errors (default: off)
+  -s, --[no-]enable-sound   executes `say` command if available
+                            (default: off)
+  -l, --list                list the names of all tests instead of
+                            running them
+  --ignore-lua              Whether or not to ignore the lua directive
+  --[no-]lazy               use lazy setup/teardown as the default
+                            (default: off)
+  --[no-]auto-insulate      enable file insulation (default: on)
+  -k, --[no-]keep-going     continue as much as possible after an error
+                            or failure (default: on)
+  -R, --[no-]recursive      recurse into subdirectories (default: on)
+  --[no-]shuffle            randomize file and test order, takes
+                            precedence over --sort (--shuffle-test and
+                            --shuffle-files) (default: off)
+  --[no-]shuffle-files      randomize file execution order, takes
+                            precedence over --sort-files (default: off)
+  --[no-]shuffle-tests      randomize test order within a file, takes
+                            precedence over --sort-tests (default: off)
+  --[no-]sort               sort file and test order (--sort-tests and
+                            --sort-files) (default: off)
+  --[no-]sort-files         sort file execution order (default: off)
+  --[no-]sort-tests         sort test order within a file (default: off)
+  --[no-]suppress-pending   suppress `pending` test output (default:
+                            off)
+  --[no-]defer-print        defer print to when test suite is complete
+                            (default: off)
+</code></pre>
+
+            <h4>Predefined Busted Tasks</h4>
+
+            <p>
+              Busted 1.6 added a concept of "tasks", or predefined busted
+              configuration options. You can create a <code>.busted</code> file in the root,
+              which is automatically loaded if it exists. Default options are
+              run if no task is specified. The <code>_all</code> key is inherited by all tasks.
+              You can add any argument available in the CLI (listed above), using the long name (use
+              <code>verbose = true</code>, not <code>v = true</code>). Any arguments you specify will
+              override those set in the task. You can also explicitly specify the configuration file
+              to load using the <code>--config-file=FILE</code> option, which will load configuration
+              options from <code>FILE</code> insted of the <code>.busted</code> file. An example
+              <code>.busted</code> file might look like:
+            </p>
+
+<pre><code data-language="lua">return {
+  _all = {
+    coverage = true
+  },
+  default = {
+    verbose = true
+  },
+  apiUnit = {
+    tags = "api",
+    ROOT = {"spec/unit"},
+    verbose = true
+  }
+}</code></pre>
+
+            <p>
+              This allows you to run <code>busted --run=apiUnit</code>, which
+              will run the equivalent of
+              <code>busted --coverage --tags=api --verbose spec/unit</code>. If you only
+              run <code>busted</code>, it will run the equivalent of
+              <code>busted --coverage --verbose</code>.
+            </p>
+
+            <h4>Standalone</h4>
+
+            <p>
+              You can also run busted tests standalone without invoking the
+              busted executor. By adding <code>require 'busted.runner'()</code>
+              to the beginning of your test file, it becomes a standalone
+              executable test.
+            </p>
+
+<pre><code data-language="lua">require 'busted.runner'()
+
+describe("a test", function()
+  -- tests to here
+end)
+</code></pre>
+
+          <pre><code>lua test.lua</code></pre>
+          <p>
+            This runs the test as a standalone Lua script. Of course you can
+            still run the test using busted explicitly.
+          </p>
+          <pre><code>busted test.lua</code></pre>
+
+          <p>
+            Additionally, you can still use all of the same busted command-line
+            options when running in standalone mode.
+          </p>
+          <pre><code>lua test.lua -t "tag" --verbose</code></pre>
+
+          </section>
+
+          <section class="division" id="defining-tests">
+            <h2>Defining Tests</h2>
+            <p>
+              Set up your tests using <code>describe</code> and <code>it</code>
+              blocks. These take a description (to be used for output) and
+              a callback (which either defines more blocks or contains the
+              tests themselves. Describe blocks can have more decribe blocks
+              nested. You can also use the functions <code>before_each</code>
+              and <code>after_each</code> to define functions that should be
+              run before any nested tests, and <code>setup</code> and <code>teardown</code>
+              for functions that should be run before and after the <code>describe</code> block.
+            </p>
+            <p>
+              You can also use the <code>pending</code>
+              method to leave a placeholder for a test you plan on writing
+              later.
+            </p>
+            <p>
+              Tag your tests with #hashtags to run specific tests. When you
+              run busted from the command line, add the <code>-t</code> flag to run a
+              given tag. Seperate tags by commas to run more than one tag.
+            </p>
+
+            <h4 id="describe-blocks">Describe: Context blocks</h4>
+            <p>
+              <code>describe</code> takes a title and a callback, and can be
+              nested. You can also use <code>context</code> as an alias if you
+              like.
+            </p>
+<pre><code data-language="lua">describe("a test", function()
+  -- tests go here
+
+  describe("a nested block", function()
+    describe("can have many describes", function()
+      -- tests
+    end)
+  end)
+
+  -- more tests pertaining to the top level
+end)
+</code></pre>
+
+            <h4 id="insulate-expose-blocks">Describe: Insulate &amp; Expose blocks</h4>
+            <p>
+              <code>insulate</code> and <code>expose</code> blocks are
+              <code>describe</code> aliases that control the level of sandboxing
+              performed by busted for that context block. Like their names
+              suggest, an <code>insulate</code> block insulates the test
+              environment, while an <code>expose</code> block exposes the test
+              environment to outer context blocks. By default each test file runs
+              in a separate <code>insulate</code> block, which can be disabled
+              with the <code>--no-auto-insulate</code> flag.
+            </p>
+
+            <p>
+              Test environment insulation saves the global table <code>_G</code> and any currently loaded packages <code>package.loaded</code>,
+              restoring them to their original state at the completion of the
+              <code>insulate</code> block.
+            </p>
+
+<pre><code data-language="lua">insulate("an insulated test", function()
+  require("mymodule")
+  _G.myglobal = true
+
+  -- tests go here
+
+  describe("a nested block", function()
+    describe("can have many describes", function()
+      -- tests
+    end)
+  end)
+
+  -- more tests pertaining to the top level
+end)
+
+describe("a test", function()
+  it("tests insulate block does not update environment", function()
+    assert.is_nil(package.loaded.mymodule)  -- mymodule is not loaded
+    assert.is_nil(_G.myglobal)  -- _G.myglobal is not set
+    assert.is_nil(myglobal)
+  end)
+
+  -- tests go here
+end)
+</code></pre>
+
+            <p>
+              Exposing a test environment exports any changes made to
+              <code>_G</code> and <code>package.loaded</code> to subsequent
+              context blocks. In addition, any global variables created inside
+              an <code>expose</code> block are created in the environment
+              of the context block 2 levels out. Using <code>expose</code> at
+              the root of a file will promote any <code>require</code>'s and
+              globals to the root environment, which will spillover into
+              subsequent test files.
+            </p>
+
+<pre><code data-language="lua">-- test1_spec.lua
+expose("an exposed test", function()
+  require("mymodule")
+  _G.myglobal = true
+
+  -- tests can go here
+
+  describe("a nested block", function()
+    describe("can have many describes", function()
+      -- tests
+    end)
+  end)
+
+  -- more tests pertaining to the top level
+end)
+
+describe("a test in same file", function()
+  it("tests expose block updates environment", function()
+    assert.is_truthy(package.loaded.mymodule) -- mymodule is still loaded
+    assert.is_true(_G.myglobal) -- _G.myglobal is still set
+    assert.is_equal(myglobal)
+  end)
+
+  -- tests go here
+end)
+</code></pre>
+
+<pre><code data-language="lua">-- test2_spec.lua
+describe("a test in separate file", function()
+  it("tests expose block updates environment", function()
+    assert.is_truthy(package.loaded.mymodule) -- mymodule is still loaded
+    assert.is_true(_G.myglobal)               -- _G.myglobal is still set
+    assert.is_equal(_G.myglobal, myglobal)
+  end)
+
+  -- tests go here
+end)
+</code></pre>
+
+          <h4 id="describe-tags">Describe: Tagging Tests</h4>
+          <p>
+            Tag tests using #tags, and run using the <code>-t</code> flag to only run that
+            test.
+          </p>
+<pre><code data-language="lua">describe("a test #tag", function()
+  -- tests go here
+end)
+
+describe("a nested block #another", function()
+  describe("can have many describes", function()
+    -- tests
+  end)
+
+  -- more tests pertaining to the top level
+end)
+</code></pre>
+          <pre><code>busted -t "tag" ./test.lua</code></pre>
+          <p>This runs the first group of tests, but not the second.</p>
+          <pre><code>busted -t "tag,another" ./test.lua</code></pre>
+          <p>This runs both groups.</p>
+
+          <p>You can also exclude tests that use tags with
+            the <code>--exclude-tags</code> flag.  This can be useful,
+            for example, if tests using a certain tag take a long time
+            to run and you want busted to skip them.  This would run
+            all tests except the second group in the example above.</p>
+          <pre><code>busted --exclude-tags="another" ./test.lua</code></pre>
+          
+          <p>If you use <code>-t, --tags</code> and <code>--exclude-tags</code>
+            together then <code>--exclude-tags</code> always takes precedence.</p>
+
+<pre><code data-language="lua">describe("a test with two tags #one #two", function ()
+  -- tests
+end)
+</code></pre>
+
+          <pre><code>busted --tags="one" --exclude-tags="two" ./test.lua</code></pre>
+          <p>Both tags refer to the same test but busted will not run it since
+            <code>--exclude-tags</code> takes precedence.</p>
+          <pre><code>busted --tags="one" --exclude-tags="one" ./test.lua</code></pre>
+          <p>It is ok for different tags to refer to the same tests, but using the
+            exact same tag name with <code>--tags</code> and <code>--exclude-tags</code>
+            at the same time is an error.</p>
+
+          <h4>Randomizing Tests</h4>
+          <p>
+            You can cause nested tests and describes to be randomized by calling
+            <code>randomize()</code>.
+          </p>
+<pre><code data-language="lua">describe("a ramdomized test", function()
+  randomize()
+
+  it("runs a test", function() end)
+  it("runs another test", function() end)
+end)
+</code></pre>
+
+          <p>
+            If randomization has been enabled for all tests with the
+            <code>--shuffle</code> flag, you can turn off randomization for
+            nested tests and describes by calling <code>randomize(false)</code>.
+          </p>
+<pre><code data-language="lua">describe("a non-randomized test", function()
+  randomize(false)
+
+  it("runs a test", function() end)
+  it("runs another test", function() end)
+end)
+</code></pre>
+
+          <h4 id="it">It: Defining tests</h4>
+          <p>
+            An <code>it</code> block takes a title and a callback. Tests fail if an
+            uncaptured error is thrown (assert functions throw errors for
+            failed tests). You can also use <code>spec</code> or <code>test</code>
+            as aliases if you like.
+          </p>
+<pre><code data-language="lua">describe("busted", function()
+  it("has tests", function()
+    local obj1 = { test = "yes" }
+    local obj2 = { test = "yes" }
+    assert.same(obj1, obj2)
+  end)
+end)
+</code></pre>
+
+          <h4 id="before-each">Before Each &amp; After Each; Setup &amp; Teardown</h4>
+          <p>
+            <code>before_each</code> runs before each child test, and
+            <code>after_each</code> (you guessed it) runs after. <code>setup</code>
+            runs first in a <code>describe</code> block, and <code>teardown</code>
+            runs last in a <code>describe</code> block.
+          </p>
+          <p>
+            <code>setup</code> and <code>teardown</code> blocks can be made lazy
+            or strict. <code>lazy_setup</code> and <code>lazy_teardown</code>
+            will only run if there is at least one child test present in the
+            current or any nested <code>describe</code> blocks. Conversely,
+            <code>strict_setup</code> and <code>strict_teardown</code> will
+            always run in a <code>describe</code> block, even if no child tests
+            are present. By default <code>setup</code> and <code>teardown</code>
+            are strict, but can be made lazy with the <code>--lazy</code> flag.
+          </p>
+<pre><code data-language="lua">describe("busted", function()
+  local obj1, obj2
+  local util
+
+  setup(function()
+    util = require("util")
+  end)
+
+  teardown(function()
+    util = nil
+  end)
+
+  before_each(function()
+    obj1 = { test = "yes" }
+    obj2 = { test = "yes" }
+  end)
+
+  it("sets up vars with the before_each", function()
+    obj2 = { test = "no" }
+    assert.are_not.same(obj1, obj2)
+  end)
+
+  it("sets up vars with the before_each", function()
+    -- obj2 is reset thanks to the before_each
+    assert.same(obj1, obj2)
+  end)
+
+  describe("nested", function()
+    it("also runs the before_each here", function()
+      -- if this describe also had a before_each, it would run
+      -- both, starting with the parents'. You can go n-deep.
+    end)
+  end)
+end)
+</code></pre>
+
+          <p>
+            <code>finally</code> is also available as a lighter alternative
+            that avoids setting upvalues.
+          </p>
+
+          <pre><code data-language="lua">it('checks file contents',function()
+  local f = io.popen('stupid_process')
+
+  -- ensure that once test has finished f:close() is called
+  -- independent of test outcome
+  finally(function() f:close() end)
+
+  -- do things with f
+end)
+</code></pre>
+
+          <h4 id="pending">Pending</h4>
+          <p>
+            Pending functions are placeholders for tests you plan to write
+            (or fix) later.
+          </p>
+<pre><code data-language="lua">describe("busted pending tests", function()
+  pending("I should finish this test later")
+end)
+</code></pre>
+        </section>
+
+        <section class="division" id="asserts">
+          <h2>Asserts</h2>
+          <p>
+            Asserts are the core of busted; they're what you use to actually
+            write your tests. Asserts in busted work by chaining a modifier value
+            by using <code>is</code> or <code>is_not</code>, followed by the assert you wish to use.
+            It's easy to extend busted and add your own asserts by building an
+            assert with a commmon signature and <a href="index.html#assert-extend">registering it</a>.
+          </p>
+          <p>
+            Busted uses the <a href="https://github.com/lunarmodules/luassert">luassert library</a> to 
+            provide the assertions. Note that some of the assertion/modifiers are Lua keywords (
+            <code>true</code>, <code>false</code>, <code>nil</code>, <code>function</code>, and <code>
+            not</code>) and they cannot be used using '.' chaining because that results in compilation 
+            errors. Instead chain using '_' (underscore) or use one or more capitals in the reserved 
+            word, whatever your coding style prefers.
+          </p>
+
+
+          <h4 id="assert-is">Is &amp; Is Not</h4>
+          <p>
+            <code>is</code> and <code>is_not</code> flips the expected value 
+            of the assertion; if <code>is_not</code> is used, the assertion 
+            fails if it doesn't throw an error. <code>are</code>, 
+            <code>are_not</code>, <code>has_no</code>, <code>was</code>,
+            and, <code>was_not</code> are aliased as well 
+            to appease your grammar sensibilities. <code>is</code>
+            and its aliases are always optional.
+          </p>
+<pre><code data-language="lua">describe("some assertions", function()
+  it("tests positive assertions", function()
+    assert.is_true(true)  -- Lua keyword chained with _
+    assert.True(true)     -- Lua keyword using a capital
+    assert.are.equal(1, 1)
+    assert.has.errors(function() error("this should fail") end)
+  end)
+
+  it("tests negative assertions", function()
+    assert.is_not_true(false)
+    assert.are_not.equals(1, "1")
+    assert.has_no.errors(function() end)
+  end)
+end)
+</code></pre>
+
+          <h4 id="assert-equals">Equals</h4>
+          <p>
+            Equals takes 1-n arguments and checks if they are the
+            <em>same instance</em>. This is equivalent to calling object1 == object2.
+          </p>
+<pre><code data-language="lua">describe("some asserts", function()
+  it("checks if they're equals", function()
+    local expected = 1
+    local obj = expected
+
+    assert.are.equals(expected, obj)
+  end)
+end)
+</code></pre>
+
+          <h4 id="assert-same">Same</h4>
+          <p>
+            Same takes 1-n arguments and checks if they are they are similar
+            by doing a deep compare.
+          </p>
+<pre><code data-language="lua">describe("some asserts", function()
+  it("checks if they're the same", function()
+    local expected = { name = "Jack" }
+    local obj = { name = "Jack" }
+
+    assert.are.same(expected, obj)
+  end)
+end)
+</code></pre>
+
+          <h4 id="assert-true">True &amp; Truthy; False &amp; Falsy</h4>
+          <p>
+            <code>true</code> evaluates if the value is the boolean <code>true</code>; <code>truthy</code> checks
+            if it's non-false and non-nil (as if you passed it into a boolean
+            expression in Lua. <code>false</code> and <code>falsy</code> are the opposite;
+            <code>false</code> checks for the boolean <code>false</code>, <code>falsy</code> checks for false or nil.
+          </p>
+<pre><code data-language="lua">describe("some asserts", function()
+  it("checks true", function()
+    assert.is_true(true)
+    assert.is.not_true("Yes")
+    assert.is.truthy("Yes")
+  end)
+
+  it("checks false", function()
+    assert.is_false(false)
+    assert.is.not_false(nil)
+    assert.is.falsy(nil)
+  end)
+end)
+</code></pre>
+
+          <h4 id="assert-error">Error</h4>
+          <p>
+            Makes sure an error exception is fired that you expect.
+          </p>
+<pre><code data-language="lua">describe("some asserts", function()
+  it("should throw an error", function()
+    assert.has_error(function() error("Yup,  it errored") end)
+    assert.has_no.errors(function() end)
+  end)
+
+  it("should throw the error we expect", function()
+    local errfn = function()
+      error("DB CONN ERROR")
+    end
+
+    assert.has_error(errfn, "DB CONN ERROR")
+  end)
+end)
+</code></pre>
+
+
+          <h4 id="assert-extend">Extending Your Own Assertions</h4>
+          <p>
+            Add in your own assertions to reuse commonly written code. You
+            can register error message keys for both positive (<code>is</code>)
+            and negative (<code>is_not</code>) cases for multilingual
+            compatibility as well ("en" by default.)
+          </p>
+<pre><code data-language="lua">local say = require("say")
+
+local function has_property(state, arguments)
+  local has_key = false
+
+  if not type(arguments[1]) == "table" or #arguments ~= 2 then
+    return false
+  end
+
+  for key, value in pairs(arguments[1]) do
+    if key == arguments[2] then
+      has_key = true
+    end
+  end
+
+  return has_key
+end
+
+say:set("assertion.has_property.positive", "Expected %s \nto have property: %s")
+say:set("assertion.has_property.negative", "Expected %s \nto not have property: %s")
+assert:register("assertion", "has_property", has_property, "assertion.has_property.positive", "assertion.has_property.negative")
+
+describe("my table", function()
+  it("has a name property", function()
+    assert.has_property({ name = "Jack" }, "name")
+  end)
+end)
+</code></pre>
+        </section>
+
+        <section class="division" id="spies-mocks-stubs">
+          <h2>Spies, Stubs, &amp; Mocks</h2>
+          <p>
+            Spies are essentially wrappers around functions that keep track
+            of data about how the function was called, and by default calls
+            the function. Stubs are the same as spies, except they return
+            immediately without calling the function. <code>mock(table, stub)</code>
+            returns a table whose functions have been wrapped in spies or
+            stubs.
+          </p>
+
+          <h4 id="spies">Spies</h4>
+          <p>
+            Spies contain two methods: <code>on</code> and <code>new</code>.
+            <code>spy.on(table, method_name)</code> does an in-place
+            replacement of a table's method, and when the original method is
+            called, it registers what it was called with and then calls the
+            original function.
+          </p>
+<pre><code data-language="lua">describe("spies", function()
+  it("registers a new spy as a callback", function()
+    local s = spy.new(function() end)
+
+    s(1, 2, 3)
+    s(4, 5, 6)
+
+    assert.spy(s).was.called()
+    assert.spy(s).was.called(2) -- twice!
+    assert.spy(s).was.called_with(1, 2, 3) -- checks the history
+  end)
+
+  it("replaces an original function", function()
+    local t = {
+      greet = function(msg) print(msg) end
+    }
+
+    local s = spy.on(t, "greet")
+
+    t.greet("Hey!") -- prints 'Hey!'
+    assert.spy(t.greet).was_called_with("Hey!")
+
+    t.greet:clear()   -- clears the call history
+    assert.spy(s).was_not_called_with("Hey!")
+
+    t.greet:revert()  -- reverts the stub
+    t.greet("Hello!") -- prints 'Hello!', will not pass through the spy
+    assert.spy(s).was_not_called_with("Hello!")
+  end)
+end)
+</code></pre>
+
+          <h4 id="stubs">Stubs</h4>
+          <p>
+            Stubs act similarly to spies, except they do not call 
+            the function they replace. This is useful for testing things
+            like data layers.
+          </p>
+
+<pre><code data-language="lua">describe("stubs", function()
+  it("replaces an original function", function()
+    local t = {
+      greet = function(msg) print(msg) end
+    }
+
+    stub(t, "greet")
+
+    t.greet("Hey!") -- DOES NOT print 'Hey!'
+    assert.stub(t.greet).was.called_with("Hey!")
+
+    t.greet:revert()  -- reverts the stub
+    t.greet("Hey!") -- DOES print 'Hey!'
+  end)
+end)
+</code></pre>
+
+          <h4 id="mocks">Mocks</h4>
+          <p>
+            Mocks are tables whose functions have been wrapped in spies,
+            or optionally stubs. This is useful for checking execution
+            chains. Wrapping is recursive, so wrapping functions in 
+            sub-tables as well.
+          </p>
+
+<pre><code data-language="lua">describe("mocks", function()
+  it("replaces a table with spies", function()
+    local t = {
+      thing = function(msg) print(msg) end
+    }
+
+    local m = mock(t) -- mocks the table with spies, so it will print
+
+    m.thing("Coffee")
+    assert.spy(m.thing).was.called_with("Coffee")
+  end)
+
+  it("replaces a table with stubs", function()
+    local t = {
+      thing = function(msg) print(msg) end
+    }
+
+    local m = mock(t, true) -- mocks the table with stubs, so it will not print
+
+    m.thing("Coffee")
+    assert.stub(m.thing).was.called_with("Coffee")
+    mock.revert(m) -- reverts all stubs/spies in m
+    m.thing("Tea") -- DOES print 'Tea'
+  end)
+end)
+
+</code></pre>
+
+        </section>
+
+        <section class="division" id="matchers">
+          <h2>Matchers</h2>
+          <p>
+            Matchers are used to provide flexible argument matching for
+            <code>called_with</code> and <code>returned_with</code> asserts.
+            Just like with asserts, you can chain a modifier value using
+            <code>is</code> or <code>is_not</code>, followed by the matcher you
+            wish to use. Extending busted with your own matchers is done similar
+            to asserts as well; just build a matcher with a common signature and
+            <a href="index.html#matcher-extend">register it</a>. Furthermore, matchers can
+            be combined using <a href="index.html#matcher-composite">composite matchers</a>.
+          </p>
+
+<pre><code data-language="lua">
+describe("match arguments", function()
+  local match = require("luassert.match")
+
+  it("tests wildcard matcher", function()
+    local s = spy.new(function() end)
+    local _ = match._
+
+    s("foo")
+
+    assert.spy(s).was_called_with(_)        -- matches any argument
+    assert.spy(s).was_not_called_with(_, _) -- does not match two arguments
+  end)
+
+  it("tests type matchers", function()
+    local s = spy.new(function() end)
+
+    s("foo")
+
+    assert.spy(s).was_called_with(match.is_string())
+    assert.spy(s).was_called_with(match.is_truthy())
+    assert.spy(s).was_called_with(match.is_not_nil())
+    assert.spy(s).was_called_with(match.is_not_false())
+    assert.spy(s).was_called_with(match.is_not_number())
+    assert.spy(s).was_called_with(match.is_not_table())
+  end)
+
+  it("tests more matchers", function()
+    local s = spy.new(function() end)
+
+    s(1)
+
+    assert.spy(s).was_called_with(match.is_equal(1))
+    assert.spy(s).was_called_with(match.is_same(1))
+  end)
+end)
+</code></pre>
+
+            <h4 id="matcher-composite">Reference Matchers</h4>
+            <p>
+                If you're creating a spy for functions that mutate any properties on an table (for example <code>self</code>)
+                and you want to use <code>was_called_with</code>, you should use <code>match.is_ref(obj)</code>.
+            </p>
+
+            <pre><code data-language="lua">
+describe("combine matchers", function()
+  local match = require("luassert.match")
+
+  it("tests ref matchers for passed in table", function()
+    local t = { cnt = 0, }
+    function t.incrby(t, i) t.cnt = t.cnt + i end
+
+    local s = spy.on(t, "incrby")
+
+    s(t, 2)
+
+    assert.spy(s).was_called_with(match.is_ref(t), 2)
+  end)
+
+  it("tests ref matchers for self", function()
+    local t = { cnt = 0, }
+    function t:incrby(i) self.cnt = self.cnt + i end
+
+    local s = spy.on(t, "incrby")
+
+    t:incrby(2)
+
+    assert.spy(s).was_called_with(match.is_ref(t), 2)
+  end)
+end)
+</code></pre>
+
+            <h4 id="matcher-composite">Composite Matchers</h4>
+            <p>
+                Combine matchers using composite matchers.
+            </p>
+
+            <pre><code data-language="lua">
+describe("combine matchers", function()
+  local match = require("luassert.match")
+
+  it("tests composite matchers", function()
+    local s = spy.new(function() end)
+
+    s("foo")
+
+    assert.spy(s).was_called_with(match.is_all_of(match.is_not_nil(), match.is_not_number()))
+    assert.spy(s).was_called_with(match.is_any_of(match.is_number(), match.is_string(), match.is_boolean())))
+    assert.spy(s).was_called_with(match.is_none_of(match.is_number(), match.is_table(), match.is_boolean())))
+  end)
+end)
+</code></pre>
+
+          <h4 id="matcher-extend">Extending Your Own Matchers</h4>
+          <p>
+            Add in your own matchers to reuse commonly written code.
+            Note that only when boolean true returned, it is considered a match.
+            For example, you should write "value:find(sub) ~= nil" instead of just "value:find(sub)".
+          </p>
+
+<pre><code data-language="lua">
+local function is_even(state, arguments)
+  return function(value)
+    return (value %2) == 0
+  end
+end
+
+local function is_gt(state, arguments)
+  local expected = arguments[1]
+  return function(value)
+    return value > expected
+  end
+end
+
+assert:register("matcher", "even", is_even)
+assert:register("matcher", "gt", is_gt)
+
+describe("custom matchers", function()
+  it("match even", function()
+    local s = spy.new(function() end)
+
+    s(2)
+
+    assert.spy(s).was_called_with(match.is_even())
+  end)
+
+  it("match greater than", function()
+    local s = spy.new(function() end)
+
+    s(10)
+
+    assert.spy(s).was_called_with(match.is_gt(5))
+  end)
+end)
+</code></pre>
+
+        </section>
+
+        <section class="division" id="async-tests">
+          <h2>Async Tests</h2>
+          <p>
+            Sometimes you need to write tests that work with asynchronous calls
+            such as when dealing with HTTP requests, threads, or database
+            calls. Call <code>async()</code> at the top of an <code>it</code>
+            to specify that your test should wait, and call <code>done()</code>
+            to complete a test.
+          </p>
+
+<pre><code data-language="lua">
+describe('API integration tests', function()
+  it('loads user data', function()
+    async()
+
+    local user_id = 1
+
+    makeAPICall(function(data)
+      -- do things
+      assert.are.equal(user_id, data.id)
+      done()
+    )
+  end)
+end)
+</code></pre>
+
+        </section>
+
+        <section class="division" id="private">
+          <h2>Private</h2>
+          <p>
+            Busted does not define any global variables for testing internal/private helper
+            functions . We believe the correct way to address this is to refactor your code
+            to make it more externally testable. However, if you wish to expose private
+            elements for testing purposes only you can do the following:
+          </p>
+<pre><code data-language="lua">-- a new module with private elements to be tested
+local mymodule = {}
+local private_element = {"this", "is", "private"}
+
+function mymodule:display()
+  print(string.concat(private_element, " "))
+end
+
+-- export locals for test
+if _TEST then
+  -- setup test alias for private elements using a modified name
+  mymodule._private_element = private_element
+end
+
+return mymodule
+</code></pre>
+          <p>
+          In the test specs it can be tested:
+          </p>
+<pre><code data-language="lua">local mymodule
+
+describe("Going to test a private element", function()
+
+  setup(function()
+    _G._TEST = true
+    mymodule = require("mymodule")
+  end)
+
+  teardown(function()
+    _G._TEST = nil
+  end)
+
+  it("tests the length of the table", function()
+    assert.is.equal(#mymodule._private_element, 3)
+  end)
+
+end)
+</code></pre>
+        </section>
+
+        <section class="division" id="output-handlers">
+          <h2>Output Handlers</h2>
+          <p>
+            Busted supports several output handlers by default, and it's easy to
+            extend busted to include your own output handlers.
+          </p>
+
+          <h4 id="output-utfTerminal">UTF and Coloring: Pretty Terminal Output with utfTerminal</h4>
+          <p>Uses ansicolors and utf to display a concise but informative output.</p>
+
+          <img src="img/run.png" alt="run" />
+
+          <h4 id="output-plainTerminal">Clean output with plainTerminal</h4>
+          <p>Uses safe characters and no coloring.</p>
+
+          <img src="img/plain.png" alt="plain"/>
+
+          <h4 id="output-json">JSON for integration with json output</h4>
+          <p>Useful for streaming or loading all results at once with the --defer-print flag.</p>
+
+          <img src="img/json.png" alt="json" class="downsize-json-image"/>
+
+          <h4 id="output-tap">TAP for use with CI systems</h4>
+          <p><a href="https://en.wikipedia.org/wiki/Test_Anything_Protocol">TAP</a> is an agnostic protocol used by most automated testing suites.</p>
+
+          <img src="img/tap.png" alt="tap" />
+
+          <h4>Registering Your Own Output Handler</h4>
+
+          <p>
+            If you pass the <code>-o</code> flag a path instead of a name (such as in <code>busted spec -o thing.lua</code>, it will look 
+            in that path to load the output file. Check out the 
+            <a href="https://github.com/lunarmodules/busted/tree/master/busted/outputHandlers" targt="_blank">existing output files</a>
+            for examples. It should have a signature like:
+          </p>
+
+<pre><code data-language="lua">-- custom_output.lua
+
+local output = function(options)
+  local busted = require("busted")
+  local handler = require("busted.outputHandlers.base")()
+
+  handler.testStart = function(element, parent)
+    -- this function is called before a test is started
+    -- you can display a test started message from here
+  end
+
+  handler.testEnd = function(element, parent, status, trace)
+    -- this function is called after a test has completed
+    -- output the pass/fail/error status of the test
+  end
+
+  busted.subscribe({'test', 'start'}, handler.testStart)
+  busted.subscribe({'test', 'end'}, handler.testEnd)
+
+  return handler
+end
+
+return output
+</code></pre>
+        </section>
+
+        <section class="division" id="moonscript">
+          <h2>Moonscript</h2>
+          <p>
+            <a href="https://moonscript.org" target="_blank">Moonscript</a> is
+            a dynamic scripting language that compiles to Lua. Busted supports
+            Moonscript natively without any additional compilation steps, and
+            will redirect line numbers to show the proper line numbers for
+            failing tests.
+          </p>
+
+<pre><code data-language="lua">-- source: moonscript_spec.moon
+describe "moonscript tests", ->
+  it "runs", ->
+    assert.are.equal true, true
+
+  it "fails", ->
+    assert.error(-> assert.are.equal false, true)
+
+describe "async moonscript tests", ->
+  it "runs async tests", () ->
+    async()
+
+    some_asynchronous_call(guard ->
+      assert.is_true true
+      done()
+    )
+
+</code></pre>
+
+        </section>
+
+        <section class="division" id="language-packs">
+          <h2>I18n</h2>
+          <p>
+            Busted supports English (en), Arabic (ar), French (fr), Spanish (es), Dutch (nl),
+            Russian (ru), German (de), Japanese (ja), Chinese (zh), Thai (th), and Ukranian (ua)
+            by default.
+            Check out the <a href="https://github.com/lunarmodules/busted/tree/master/busted/languages" target="_blank">existing language packs</a>
+            and send in a pull request.
+          </p>
+
+          <h4 id="adding-language"></h4>
+          <p>
+            Busted supports adding in new languages easily. Pass a <code>--lang</code>
+            parameter to choose one of the built-in languages, or a path
+            to a lua file to run containing your own language. Don't forget
+            to submit languages in pull requests as you make them!
+            Check out the <a href="https://github.com/lunarmodules/busted/tree/master/busted/languages" target="_blank">existing language packs</a>
+            to see a template for what you should replace. Copy any of the
+            existing files. It uses the <a href="https://github.com/lunarmodules/say">say</a>
+            string key/value store for registration.
+          </p>
+          <p>
+            Examples: <code>busted --lang=ar spec</code> or
+            <code>busted --lang=se.lua spec</code>
+          </p>
+        </section>
+
+        <section class="division" id="shell-completion">
+          <h2>Shell Completion</h2>
+          <p>
+            You can download shell completion packs from the
+            <a href="https://github.com/lunarmodules/busted/tree/master/completions" target="_blank">./completions</a>
+            folder of the Github repository.
+          </p>
+        </section>
+
+        <section class="division" id="contributing">
+          <h2>Contributing</h2>
+          <p>
+            You can help! It's as easy as submitting a <a href="https://github.com/lunarmodules/busted/issues">suggestion or issue</a>,
+            or <a href="https://github.com/lunarmodules/busted">check out the code for yourself</a>
+            and submit your changes in a pull request. We could especially use help with
+            translations - check out the src/languages folder in <a href="https://github.com/lunarmodules/busted/tree/master/busted/languages">busted</a>
+            and <a href="https://github.com/lunarmodules/luassert/tree/master/src/languages">luassert</a>
+            to see if you can help.
+          </p>
+
+          <p>
+            busted has a <a href="https://github.com/lunarmodules/busted/graphs/contributors" target="_blank">big list of contributors</a>
+            and we welcome contributions from all!
+          </p>
+        </section>
+      </div>
+    </div>
+
+      <div class="row">
+        <footer class="span12 division">
+          <p><strong><a href="https://github.com/lunarmodules/busted">busted</a></strong> is bravely maintained by <a href="https://github.com/Olivine-Labs">Olivine Labs</a>.</p>
+          <p><small><a href="https://raw.github.com/lunarmodules/busted/master/LICENSE">MIT Licensed</a>. &copy; 2013 Olivine Labs, LLC. Documentation hosted on GitHub Pages.</small></p>
+        </footer>
+      </div>
+    </div>
+
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/rainbow.min.js"></script>
+    <script src="js/lua.js"></script>
+
+    <script src="js/bootstrap.min.js"></script>
+
+    <script>
+      $(function(){
+        $('.sidenav').affix({ offset: { top: 200, bottom: 150 } })
+      });
+
+      var _gaq=[['_setAccount','UA-22050912-1'],['_trackPageview']]; 
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+  </body>
+</html>
+
