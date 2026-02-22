@@ -1,6 +1,7 @@
 # MIT License
 #
-# Copyright (c) 2026 Kritzel Kratzel.
+# Copyright (c) 2012-2020 Olivine Labs, LLC.
+# Copyright (c) 2026 The OneLuaPro project authors.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in 
@@ -97,6 +98,9 @@ set(INSTALL_TOP_LDIR
 # busted Launcher (.exe instead of .bat)
 if(WIN32)
 
+  # User option (Default: OFF for Windows 7 compatibility)
+  option(USE_PATHCCH "Use modern PathCch Library (requires Windows 8+)" OFF)
+
   # Define absolute paths for the input Lua script and the generated C++ header
   set(BUSTED_INPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/bin/busted")
   set(BUSTED_HEADER_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated/busted_source.h")
@@ -138,7 +142,14 @@ if(WIN32)
   target_link_directories(BustedLauncher PRIVATE ${LIBLUA_LIBDIR})
   
   # Link dependencies: liblua for the interpreter and pathcch for Windows path handling
-  target_link_libraries(BustedLauncher PRIVATE liblua.lib pathcch.lib)
+  if(USE_PATHCCH)
+    # pathcch requires Windows 8 and upwards
+    target_compile_definitions(BustedLauncher PRIVATE USE_PATHCCH)
+    target_link_libraries(BustedLauncher PRIVATE liblua.lib pathcch.lib)
+  else()
+    # Shlwapi is for Windows 7 upwards compatible
+    target_link_libraries(BustedLauncher PRIVATE liblua.lib shlwapi.lib)
+  endif()
 
   # Rename the final binary to 'busted.exe' (default would be BustedLauncher.exe)
   set_target_properties(BustedLauncher PROPERTIES OUTPUT_NAME "busted")
