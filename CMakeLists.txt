@@ -140,14 +140,19 @@ if(WIN32)
 
   # Linker: Set path for the Lua library
   target_link_directories(BustedLauncher PRIVATE ${LIBLUA_LIBDIR})
+
+  # Enable DELAYLOAD
+  target_link_options(BustedLauncher PRIVATE "LINKER:/DELAYLOAD:lua.dll" "LINKER:/DEPENDENTLOADFLAG:0x0")
+  target_link_libraries(BustedLauncher PRIVATE delayimp.lib)
   
   # Link dependencies: liblua for the interpreter and pathcch for Windows path handling
   if(USE_PATHCCH)
     # pathcch requires Windows 8 and upwards
-    target_compile_definitions(BustedLauncher PRIVATE USE_PATHCCH)
+    target_compile_definitions(BustedLauncher PRIVATE USE_PATHCCH _CRT_SECURE_NO_WARNINGS)
     target_link_libraries(BustedLauncher PRIVATE liblua.lib pathcch.lib)
   else()
     # Shlwapi is for Windows 7 upwards compatible
+    target_compile_definitions(BustedLauncher PRIVATE _CRT_SECURE_NO_WARNINGS)
     target_link_libraries(BustedLauncher PRIVATE liblua.lib shlwapi.lib)
   endif()
 
