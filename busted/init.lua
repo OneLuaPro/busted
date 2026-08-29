@@ -29,7 +29,13 @@ local function init(busted)
     if not element.env then element.env = {} end
 
     block.rejectAll(element)
-    element.env.finally = function(fn) finally = fn end
+    element.env.finally = function(fn)
+      local old_finally = finally or function() end
+      finally = function()
+        fn()
+        old_finally()
+      end
+    end
     element.env.pending = busted.pending
 
     local pass, ancestor = block.execAll('before_each', parent, true)
